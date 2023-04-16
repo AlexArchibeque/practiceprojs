@@ -18,7 +18,16 @@ export default function Todo() {
     }
   };
 
-  const handleRadioClick = () => {};
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewTodo(e.target.value);
+    setTodoError("");
+  };
+
+  const handleRadioClick = (todoKey: string) => {
+    const copyHash = { ...todoList };
+    copyHash[todoKey] = !copyHash[todoKey];
+    setTodoList(copyHash);
+  };
 
   return (
     <div className="flex min-h-screen flex-col items-center p-24">
@@ -26,7 +35,7 @@ export default function Todo() {
         <input
           value={newTodo}
           className="text-black"
-          onChange={(e) => setNewTodo(e.target.value)}
+          onChange={(e) => handleInputChange(e)}
         />
         <button
           onClick={addTodo}
@@ -35,6 +44,9 @@ export default function Todo() {
           Add Todo
         </button>
       </div>
+      {todoError.length > 1 && (
+        <div className="bg-red-700 w-3/12 flex p-2 mb-1">{todoError}</div>
+      )}
       <div className="w-3/12">
         {Object.keys(todoList).length > 0 &&
           Object.keys(todoList).map((todoKey, idx) => {
@@ -46,18 +58,24 @@ export default function Todo() {
   );
 }
 
-const selectedTodoStyles = `bg-slate-700`;
+const selectedTodoStyles = `bg-slate-700 line-through`;
 const unselectedTodoStyles = `bg-slate-800`;
 
 const todoComponent = (
   todoKey: string,
   todoValue: boolean,
   idx: number,
-  handleRadioClick: () => void
+  handleRadioClick: (todoKey: string) => void
 ) => {
   return (
-    <div>
-      <input type="radio" onClick={handleRadioClick} />
+    <div className="flex">
+      <input
+        type="radio"
+        checked={todoValue}
+        readOnly
+        onClick={() => handleRadioClick(todoKey)}
+        className="p-2 m-2"
+      />
       <div
         className={`w-full mb-1 flex p-2 ${
           todoValue ? selectedTodoStyles : unselectedTodoStyles
